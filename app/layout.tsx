@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "Thorn",
-  description: "The cleanest link you'll ever click.",
+  description: "The biolink for the modern internet.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={outfit.className}>
-        {children}
-      </body>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

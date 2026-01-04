@@ -21,7 +21,8 @@ body {
 .aurora-bg {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
+  pointer-events: none;
   background: var(--background);
 }
 
@@ -70,11 +71,6 @@ body {
   transform: translateY(-2px);
 }
 
-.glass-panel.soft {
-  background: rgba(255,255,255,0.02);
-  border-color: rgba(255,255,255,0.06);
-}
-
 /* ---------- INPUTS ---------- */
 .modern-input {
   width: 100%;
@@ -90,41 +86,4 @@ body {
   outline: none;
   border-color: #5865F2;
   box-shadow: 0 0 0 2px rgba(88,101,242,0.15);
-}
-
-/* ---------- LABEL ---------- */
-.label {
-  @apply text-xs font-semibold uppercase tracking-wider text-gray-500;
-}
-
-/* ---------- BUTTONS ---------- */
-.btn-primary {
-  @apply bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition shadow-lg shadow-white/10;
-}
-
-.btn-secondary {
-  @apply bg-white/10 border border-white/10 text-white py-3 rounded-xl hover:bg-white/20 transition;
-}
-
-.btn-accent {
-  @apply bg-[#5865F2] hover:bg-[#4752c4] text-white font-semibold rounded-xl transition;
-}
-
-/* ---------- LINKS ---------- */
-.glass-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  transition: all .25s ease;
-}
-
-.glass-button:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.08);
 }

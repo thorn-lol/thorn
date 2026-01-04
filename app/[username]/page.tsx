@@ -17,14 +17,12 @@ async function getProfile(username: string) {
   return profile;
 }
 
-type Props = { params: Promise<{ username: string }> };
+type Props = { params: { username: string } };
 
 // 2. Metadata for sharing
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const profile = await getProfile(resolvedParams.username);
-  if (!profile) return { title: "User Not Found" };
-  
+export async function generateMetadata({ params }: Props) {
+  const profile = await getProfile(params.username);
+ 
   return {
     title: `${profile.display_name} (@${profile.username})`,
     description: profile.bio || "Check out my bio link!",
@@ -36,8 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // 3. The Page Component
 export default async function PublicProfile({ params }: Props) {
-  const resolvedParams = await params;
-  const profile = await getProfile(resolvedParams.username);
+  const profile = await getProfile(params.username);
 
   if (!profile) return notFound();
 
