@@ -42,7 +42,7 @@ export default function Home() {
   if (loading) return <div className="h-screen bg-black" />;
 
   return (
-    <main className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black text-white">
+    <main className="bg-red-500 min-h-screen flex items-center justify-center relative overflow-hidden text-white">
       <div className="aurora-bg fixed inset-0 z-0" />
       
       <div className="z-10 w-full max-w-md p-8 glass-panel animate-fade-in-up text-center border-t border-white/10">
