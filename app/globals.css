@@ -1,26 +1,130 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #030303;
+  --foreground: #ffffff;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-surface: rgba(255, 255, 255, 0.03);
+  --primary-glow: rgba(88, 101, 242, 0.4);
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ---------- AURORA ---------- */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--background);
+}
+
+.aurora-bg::before,
+.aurora-bg::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: float 12s infinite alternate ease-in-out;
+}
+
+.aurora-bg::before {
+  background: radial-gradient(circle, #5865F2, #7B2CBF);
+  top: -120px;
+  left: -120px;
+}
+
+.aurora-bg::after {
+  background: radial-gradient(circle, #4CC9F0, #4361EE);
+  bottom: -120px;
+  right: -120px;
+  animation-delay: -6s;
+}
+
+@keyframes float {
+  to {
+    transform: translate(60px, 60px) scale(1.15);
+  }
+}
+
+/* ---------- GLASS ---------- */
+.glass-panel {
+  background: var(--glass-surface);
+  backdrop-filter: blur(22px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,.55);
+  transition: transform .2s ease;
+}
+
+.glass-panel:hover {
+  transform: translateY(-2px);
+}
+
+.glass-panel.soft {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* ---------- INPUTS ---------- */
+.modern-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  transition: all .2s ease;
+}
+
+.modern-input:focus {
+  outline: none;
+  border-color: #5865F2;
+  box-shadow: 0 0 0 2px rgba(88,101,242,0.15);
+}
+
+/* ---------- LABEL ---------- */
+.label {
+  @apply text-xs font-semibold uppercase tracking-wider text-gray-500;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn-primary {
+  @apply bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition shadow-lg shadow-white/10;
+}
+
+.btn-secondary {
+  @apply bg-white/10 border border-white/10 text-white py-3 rounded-xl hover:bg-white/20 transition;
+}
+
+.btn-accent {
+  @apply bg-[#5865F2] hover:bg-[#4752c4] text-white font-semibold rounded-xl transition;
+}
+
+/* ---------- LINKS ---------- */
+.glass-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  transition: all .25s ease;
+}
+
+.glass-button:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.08);
 }
