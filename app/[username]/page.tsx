@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
-// 1. Initialize Supabase
+// 1. Init Supabase
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -14,141 +14,145 @@ async function getProfile(username: string) {
     .select("*")
     .eq("username", username)
     .single();
-
   return profile;
 }
 
-type Props = {
-  params: Promise<{ username: string }>
-}
+type Props = { params: Promise<{ username: string }> };
 
-// ADD THIS FUNCTION
+// 2. Metadata for sharing
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const profile = await getProfile(resolvedParams.username);
-
-  if (!profile) {
-    return {
-      title: "User Not Found",
-    };
-  }
-
+  if (!profile) return { title: "User Not Found" };
+  
   return {
     title: `${profile.display_name} (@${profile.username})`,
     description: profile.bio || "Check out my bio link!",
     openGraph: {
-      title: `${profile.display_name} (@${profile.username})`,
-      description: profile.bio || "Check out my bio link!",
-      images: [
-        {
-          url: profile.avatar_url,
-          width: 400,
-          height: 400,
-        },
-      ],
-      type: "website",
-    },
-    twitter: {
-      card: "summary", // Makes it a small neat card like Twitter/Discord profiles
-      title: profile.display_name,
-      description: profile.bio,
-      images: [profile.avatar_url],
+      images: [{ url: profile.avatar_url, width: 400, height: 400 }],
     },
   };
 }
 
+// 3. The Page Component
 export default async function PublicProfile({ params }: Props) {
-  // 3. THE FIX: Await the params object before using it
   const resolvedParams = await params;
-  const username = resolvedParams.username;
-  
-  const profile = await getProfile(username);
+  const profile = await getProfile(resolvedParams.username);
 
-  // If user doesn't exist, show 404
-  if (!profile) {
-    return notFound();
-  }
+  if (!profile) return notFound();
+
+  // Determine Background: Custom Image OR Default Aurora
+  const hasCustomBg = !!profile.background_url;
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-black text-white font-sans">
+    <main className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#0a0a0a]">
       
-      {/* Dynamic Background */}
-      <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-20 blur-[120px] pointer-events-none"
-        style={{ backgroundColor: profile.theme === 'dark' ? '#5865F2' : '#ffffff' }}
-      ></div>
+      {/* BACKGROUND LAYER */}
+      {hasCustomBg ? (
+        <div 
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+            style={{ 
+                backgroundImage: `url(${profile.background_url})`,
+                filter: 'brightness(0.7)' // Dim it slightly so text pops
+            }}
+        />
+      ) : (
+        <div className="aurora-bg" /> // Fallback to our animated gradients
+      )}
 
-      {/* Profile Card */}
-      <div className="z-10 w-full max-w-md p-6 flex flex-col items-center gap-6">
+      {/* THE DISCORD-STYLE CARD */}
+      <div className="relative z-10 w-full max-w-[600px] bg-[#111214]/90 backdrop-blur-xl border border-white/5 rounded-[20px] overflow-hidden shadow-2xl animate-fade-in-up">
         
-        {/* Avatar */}
-        <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full opacity-75 blur group-hover:opacity-100 transition duration-1000"></div>
-            <img 
-              src={profile.avatar_url} 
-              alt={profile.display_name} 
-              className="relative w-32 h-32 rounded-full border-4 border-black object-cover"
-            />
-        </div>
-
-        {/* Identity */}
-        <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-                {profile.display_name}
-            </h1>
-            <p className="text-gray-500 font-mono text-sm">@{profile.username}</p>
-        </div>
-
-        {/* Bio */}
-        {profile.bio && (
-            <p className="text-center text-gray-300 max-w-xs leading-relaxed glass-panel p-4 rounded-xl text-sm border border-white/5 bg-white/5 backdrop-blur-sm">
-                "{profile.bio}"
-            </p>
-        )}
-
-{/* Links Section */}
-<div className="w-full flex flex-col gap-3 mt-4">
-    
-    {/* Dynamic Link Mapping */}
-    {profile.links && profile.links.map((link: any, index: number) => (
-        <a 
-            key={index} 
-            href={link.url} 
-            target="_blank" 
-            rel="noopener noreferrer" // Security best practice
-            className="glass-button"
+        {/* Banner Area */}
+        <div 
+            className="h-[200px] w-full bg-cover bg-center relative"
+            style={{ 
+                backgroundColor: profile.banner_url ? 'transparent' : '#5865F2', // Fallback color
+                backgroundImage: profile.banner_url ? `url(${profile.banner_url})` : 'none'
+            }}
         >
-            {/* Logic to choose icon based on title (Simple version) */}
-            {link.title.toLowerCase().includes('discord') ? <i className="fa-brands fa-discord text-xl"></i> :
-             link.title.toLowerCase().includes('instagram') ? <i className="fa-brands fa-instagram text-xl"></i> :
-             link.title.toLowerCase().includes('twitter') || link.title.includes('x') ? <i className="fa-brands fa-twitter text-xl"></i> :
-             link.title.toLowerCase().includes('youtube') ? <i className="fa-brands fa-youtube text-xl"></i> :
-             <i className="fa-solid fa-link text-xl"></i>} 
+            {/* If no banner image, show a subtle gradient */}
+            {!profile.banner_url && <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-50" />}
+        </div>
+
+        {/* Content Area */}
+        <div className="px-8 pb-8 pt-0 relative">
             
-            <span>{link.title}</span>
-        </a>
-    ))}
+            {/* Floating Avatar (Intersects Banner) */}
+            <div className="relative -mt-[70px] mb-4 flex justify-between items-end">
+                <div className="relative group">
+                     {/* The Avatar itself */}
+                    <img 
+                        src={profile.avatar_url} 
+                        alt="Avatar" 
+                        className="w-[140px] h-[140px] rounded-full border-[8px] border-[#111214] bg-[#111214] object-cover"
+                    />
+                    {/* Status Dot (Optional - Visual only for now) */}
+                    <div className="absolute bottom-5 right-2 w-7 h-7 bg-green-500 border-[5px] border-[#111214] rounded-full" title="Online"></div>
+                </div>
 
-    {/* Fallback if no links exist */}
-    {(!profile.links || profile.links.length === 0) && (
-        <p className="text-gray-500 text-sm text-center">No links added yet.</p>
-    )}
+                {/* Optional: Social Badges top right of content? Or keep simple */}
+            </div>
 
-</div>
+            {/* Name Block */}
+            <div className="flex flex-col gap-1 mb-6">
+                <div className="flex items-center gap-2">
+                    <h1 className="text-3xl font-extrabold text-white tracking-tight">
+                        {profile.display_name}
+                    </h1>
+                    {/* VERIFIED BADGE */}
+                    {profile.is_verified && (
+                        <div className="bg-[#5865F2] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px]" title="Verified">
+                            <i className="fa-solid fa-check"></i>
+                        </div>
+                    )}
+                </div>
+                <p className="text-gray-400 font-medium">@{profile.username}</p>
+            </div>
 
+            {/* Divider */}
+            <div className="h-[1px] w-full bg-white/10 mb-6" />
+
+            {/* Bio */}
+            {profile.bio && (
+                <div className="mb-8">
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">About Me</h3>
+                    <p className="text-gray-300 leading-relaxed text-[15px] whitespace-pre-wrap">
+                        {profile.bio}
+                    </p>
+                </div>
+            )}
+
+            {/* Links Section */}
+            {profile.links && profile.links.length > 0 && (
+                <div className="space-y-3">
+                    {profile.links.map((link: any, i: number) => (
+                        <a 
+                            key={i} 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="group flex items-center justify-between p-4 bg-[#2b2d31]/50 hover:bg-[#2b2d31] border border-transparent hover:border-white/10 rounded-xl transition-all duration-200"
+                        >
+                            <div className="flex items-center gap-4">
+                                {/* Icon Logic */}
+                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-300 group-hover:text-white transition">
+                                    {link.title.toLowerCase().includes('discord') ? <i className="fa-brands fa-discord text-xl"></i> :
+                                     link.title.toLowerCase().includes('twitter') ? <i className="fa-brands fa-twitter text-xl"></i> :
+                                     link.title.toLowerCase().includes('x') ? <i className="fa-brands fa-x-twitter text-xl"></i> :
+                                     link.title.toLowerCase().includes('instagram') ? <i className="fa-brands fa-instagram text-xl"></i> :
+                                     link.title.toLowerCase().includes('youtube') ? <i className="fa-brands fa-youtube text-xl"></i> :
+                                     <i className="fa-solid fa-link text-xl"></i>}
+                                </div>
+                                <span className="font-semibold text-gray-200 group-hover:text-white">{link.title}</span>
+                            </div>
+                            <i className="fa-solid fa-arrow-up-right-from-square text-gray-600 group-hover:text-white transition text-xs"></i>
+                        </a>
+                    ))}
+                </div>
+            )}
+        </div>
       </div>
-
-      <style>{`
-        .glass-button {
-            display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px); border-radius: 16px; color: white; text-decoration: none;
-            transition: all 0.3s ease; position: relative; overflow: hidden;
-        }
-        .glass-button:hover {
-            transform: translateY(-2px); background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2);
-        }
-      `}</style>
       
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </main>
