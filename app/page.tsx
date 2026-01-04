@@ -42,17 +42,14 @@ export default function Home() {
   if (loading) return <div className="h-screen bg-black" />;
 
   return (
-    <main className="bg-red-500 min-h-screen flex items-center justify-center relative overflow-hidden text-white">
+    <main className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black text-white">
       <div className="aurora-bg fixed inset-0 z-0" />
       
       <div className="z-10 w-full max-w-md p-8 glass-panel animate-fade-in-up text-center border-t border-white/10">
         
         {/* LOGO */}
         <div className="mb-8">
-            <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg shadow-blue-900/50">
-                <i className="fa-solid fa-link text-2xl text-white"></i>
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight">Thorn</h1>
+            <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Thorn</h1>
             <p className="text-gray-400 mt-2 text-sm">The biolink for the modern internet.</p>
         </div>
 

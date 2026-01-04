@@ -15,13 +15,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Fields
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
   const [backgroundUrl, setBackgroundUrl] = useState("");
   
-  // Links
   const [links, setLinks] = useState<any[]>([]);
   const [newLinkTitle, setNewLinkTitle] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
@@ -55,7 +53,6 @@ export default function Dashboard() {
         links
     }).eq('id', profile.id);
     setSaving(false);
-    alert("Saved!");
   };
 
   const addLink = () => {
@@ -64,94 +61,90 @@ export default function Dashboard() {
     setNewLinkTitle(""); setNewLinkUrl("");
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center text-white">Loading...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center bg-[#101010] text-white">Loading...</div>;
 
   return (
-    <main className="min-h-screen p-8 flex justify-center bg-[#050505] text-white font-sans">
-        <div className="aurora-bg fixed inset-0 z-0" />
+    <main className="min-h-screen bg-[#101010] text-white font-sans flex justify-center p-6 md:p-12">
+        <div className="thorn-bg" />
         
-        <div className="w-full max-w-4xl relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 z-10">
             
-            {/* SIDEBAR / HEADER */}
-            <div className="lg:col-span-1 space-y-6">
-                <div className="glass-panel p-6 flex flex-col items-center text-center">
-                    <img src={profile.avatar_url} className="w-24 h-24 rounded-full border-4 border-[#222] mb-4" />
-                    <h1 className="text-xl font-bold">{displayName}</h1>
-                    <p className="text-gray-500 text-sm">@{profile.username}</p>
-                    {profile.is_verified && <span className="mt-2 bg-blue-600 text-xs px-2 py-1 rounded text-white">Verified</span>}
+            {/* --- SIDEBAR --- */}
+            <div className="lg:col-span-4 space-y-6">
+                <div className="bg-[#151515] border border-[#222] rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
+                    <img src={profile.avatar_url} className="w-28 h-28 rounded-full border-4 border-[#101010] mb-4 shadow-lg" />
+                    <h1 className="text-2xl font-bold">{displayName}</h1>
+                    <p className="text-gray-500 text-sm mb-4">@{profile.username}</p>
                     
                     <button 
                         onClick={() => window.open(`/${profile.username}`, '_blank')}
-                        className="mt-6 w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition border border-white/5"
+                        className="w-full py-3 bg-[#222] hover:bg-[#333] text-white rounded-xl text-sm font-bold transition border border-[#333]"
                     >
-                        Preview Page
+                        View Live Page
                     </button>
-                </div>
-
-                <div className="glass-panel p-6">
-                   <p className="text-gray-400 text-xs leading-relaxed">
-                     Tip: For banners, use wide images (1200x400). For backgrounds, use high-res wallpapers.
-                   </p>
                 </div>
             </div>
 
-            {/* MAIN EDITOR */}
-            <div className="lg:col-span-2 space-y-6">
+            {/* --- MAIN EDITOR --- */}
+            <div className="lg:col-span-8 space-y-8">
                 
-                {/* IDENTITY SECTION */}
-                <div className="glass-panel p-8 space-y-6">
-                    <h2 className="text-lg font-bold border-b border-white/10 pb-4 mb-4">Identity</h2>
-                    
-                    <div className="grid grid-cols-1 gap-5">
+                {/* 1. CORE INFO */}
+                <section className="bg-[#151515] border border-[#222] rounded-3xl p-8">
+                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                        <span className="w-2 h-8 bg-green-700 rounded-full inline-block"></span> Identity
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6">
                         <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Display Name</label>
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Display Name</label>
                             <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="modern-input" />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Bio</label>
-                            <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="modern-input h-24 resize-none" />
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Bio</label>
+                            <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="modern-input h-32 resize-none" />
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {/* VISUALS SECTION */}
-                <div className="glass-panel p-8 space-y-6">
-                    <h2 className="text-lg font-bold border-b border-white/10 pb-4 mb-4">Visuals</h2>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* 2. DESIGN */}
+                <section className="bg-[#151515] border border-[#222] rounded-3xl p-8">
+                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                         <span className="w-2 h-8 bg-green-700 rounded-full inline-block"></span> Visuals
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Banner Image URL</label>
-                            <input type="text" placeholder="https://imgur.com/..." value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} className="modern-input text-sm" />
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Banner URL</label>
+                            <input type="text" placeholder="https://..." value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} className="modern-input text-sm" />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Page Background URL</label>
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Background URL</label>
                             <input type="text" placeholder="https://..." value={backgroundUrl} onChange={(e) => setBackgroundUrl(e.target.value)} className="modern-input text-sm" />
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {/* LINKS SECTION */}
-                <div className="glass-panel p-8 space-y-6">
-                    <h2 className="text-lg font-bold border-b border-white/10 pb-4 mb-4">Links</h2>
-                    
-                    <div className="flex gap-3 mb-6">
-                        <input type="text" placeholder="Title (Discord)" value={newLinkTitle} onChange={(e) => setNewLinkTitle(e.target.value)} className="modern-input flex-1" />
+                {/* 3. LINKS */}
+                <section className="bg-[#151515] border border-[#222] rounded-3xl p-8">
+                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                        <span className="w-2 h-8 bg-green-700 rounded-full inline-block"></span> Links
+                    </h2>
+                    <div className="flex flex-col md:flex-row gap-4 mb-6">
+                        <input type="text" placeholder="Title (e.g. Spotify)" value={newLinkTitle} onChange={(e) => setNewLinkTitle(e.target.value)} className="modern-input flex-1" />
                         <input type="text" placeholder="URL" value={newLinkUrl} onChange={(e) => setNewLinkUrl(e.target.value)} className="modern-input flex-1" />
-                        <button onClick={addLink} className="bg-[#5865F2] hover:bg-[#4752c4] px-6 rounded-xl font-bold transition">Add</button>
+                        <button onClick={addLink} className="bg-[#1a472a] hover:bg-[#2d8a55] text-white px-8 rounded-xl font-bold transition">Add</button>
                     </div>
 
                     <div className="space-y-3">
                         {links.map((link, i) => (
-                            <div key={i} className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
-                                <span className="font-medium text-sm">{link.title}</span>
-                                <button onClick={() => setLinks(links.filter((_, idx) => idx !== i))} className="text-gray-500 hover:text-red-500"><i className="fa-solid fa-trash"></i></button>
+                            <div key={i} className="flex justify-between items-center bg-[#0a0a0a] border border-[#222] p-4 rounded-xl">
+                                <span className="font-bold text-sm">{link.title}</span>
+                                <button onClick={() => setLinks(links.filter((_, idx) => idx !== i))} className="text-gray-600 hover:text-red-500 transition"><i className="fa-solid fa-trash"></i></button>
                             </div>
                         ))}
-                        {links.length === 0 && <p className="text-gray-600 text-sm text-center">No links yet.</p>}
+                        {links.length === 0 && <p className="text-gray-600 text-sm">No links added.</p>}
                     </div>
-                </div>
+                </section>
 
-                <button onClick={saveProfile} disabled={saving} className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition">
+                <button onClick={saveProfile} disabled={saving} className="w-full btn-primary text-lg">
                     {saving ? "Saving..." : "Save All Changes"}
                 </button>
             </div>
